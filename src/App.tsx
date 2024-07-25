@@ -3,6 +3,7 @@ import {Route, Routes} from "react-router-dom";
 import Admin from "./containers/Admin/Admin.tsx";
 import Orders from "./containers/Orders/Orders.tsx";
 import Dishes from "./containers/Dishes/Dishes.tsx";
+import PizzaForm from "./components/PizzaForm/PizzaForm.tsx";
 
 const App = () => {
   return (
@@ -13,6 +14,8 @@ const App = () => {
                 <Route path="/admin" element={<Admin />} />
                 <Route path="/admin/orders" element={<Orders />} />
                 <Route path="/admin/dishes" element={<Dishes />} />
+                <Route path="/newDish" element={<PizzaForm />} />
+                <Route path="/edit" element={<PizzaForm />} />
                 <Route path="*" element={<h1>Not Found</h1>} />
             </Routes>
         </div>

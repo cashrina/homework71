@@ -1,34 +1,102 @@
 import {createAsyncThunk} from "@reduxjs/toolkit";
-import {ApiPizza, ApiPizzas, Pizza} from "../types.ts";
-import {AppDispatch} from "../app/store.ts";
+import {ApiPizza, ApiPizzas, PizzaId, PizzaMutation} from "../types.ts";
+import {RootState} from "../app/store.ts";
 import axiosApi from "../axiosApi.ts";
-import { updatePizzas } from './cartSlice';
 
 export interface UpdateDishArg {
     id: string;
     apiPizza: ApiPizza;
 }
 
-export const  fetchPizzas  = createAsyncThunk<
-    Pizza[],
-    string,
-    { dispatch: AppDispatch }>(
-        'pizzas/fetchPizzas', async (_, thunkAPI) => {
-            const pizzaResponse = await axiosApi.get<ApiPizzas | null>('/pizzas.json');
-            const pizzas = pizzaResponse.data;
+export const createPizza = createAsyncThunk<void, PizzaMutation, {state: RootState}>
+('/pizzas/create',async (apiPizza) => {
+    await axiosApi.post('/pizzas.json', apiPizza)
+});
 
-            let newPizzas: Pizza[] = [];
+export const fetchPizza = createAsyncThunk<PizzaId[],void, {state: RootState}>(
+    'pizzas/fetchPizza',
+    async () => {
+        const {data: pizzas} = await axiosApi.get<null | ApiPizzas>('/pizzas.json');
+        if (pizzas === null) {
+            return[];
+        }
 
-            if (pizzas) {
-                newPizzas = Object.keys(pizzas).map((key: string) => {
-                    const pizza = pizzas[key];
-                    return {id: key, ...pizza,};
-                });
-            }
-            thunkAPI.dispatch(updatePizzas(newPizzas));
-            return newPizzas;
-    }
-);
+        let newPizzas: PizzaId[] = [];
+
+        if (pizzas) {
+            newPizzas = Object.keys(pizzas).map((key: string) => {
+                const dish = pizzas[key];
+                return {
+                    id: key,
+                    ...dish,
+                };
+            });
+        }
+        // thunkAPI.dispatch(updateDishes(newDishes));
+        return newPizzas;
+    });
+
+        // return Object.keys(pizzas).map((id) => {
+        //     console.log(id)
+        // });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// export const  fetchPizzas  = createAsyncThunk<
+//     Pizza[],
+//     string,
+//     { dispatch: AppDispatch }>(
+//         'pizzas/fetchPizzas', async (_, thunkAPI) => {
+//             const pizzaResponse = await axiosApi.get<ApiPizzas | null>('/pizzas.json');
+//             const pizzas = pizzaResponse.data;
+//
+//             let newPizzas: Pizza[] = [];
+//
+//             if (pizzas) {
+//                 newPizzas = Object.keys(pizzas).map((key: string) => {
+//                     const pizza = pizzas[key];
+//                     return {id: key, ...pizza,};
+//                 });
+//             }
+//             thunkAPI.dispatch(updatePizzas(newPizzas));
+//             return newPizzas;
+//     }
+// );
 
 
 //

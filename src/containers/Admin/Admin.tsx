@@ -1,8 +1,9 @@
+import {NavLink} from "react-router-dom";
 
 const Admin = () => {
     return (
-        <div>
-            Admin page
+        <div className="my-4">
+            <NavLink to="/newDish" className="btn btn-primary">Add new Dish</NavLink>
         </div>
     );
 };

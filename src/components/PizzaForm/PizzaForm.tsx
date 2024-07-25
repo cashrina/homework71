@@ -1,41 +1,44 @@
-import {ApiPizza, PizzaMutation} from "../../types.ts";
+import {PizzaMutation} from "../../types.ts";
 import * as React from "react";
-
-interface Props {
-    onSubmit: (dish: ApiPizza) => void;
-    existingPizza?: ApiPizza;
-    isLoading?: boolean;
-}
+import {useAppDispatch, useAppSelector} from "../../app/hooks.ts";
+import {selectPizzaCreating} from "../../store/pizzaSlice.ts";
+import {createPizza} from "../../store/pizzaThunks.ts";
+import {toast} from "react-toastify";
+import {useNavigate} from "react-router-dom";
 
 const emptyState: PizzaMutation = {
     title: '',
     price: '',
     image: '',
 };
-const PizzaForm: React.FC<Props> = (onSubmit, existingPizza, isLoading = false) => {
-    const initialState: PizzaMutation = existingPizza
-        ? {...existingPizza, price: existingPizza.price.toString()}
-        : emptyState;
+const PizzaForm = () => {
+    const navigate = useNavigate();
+    const isCreating = useAppSelector(selectPizzaCreating);
+    const dispatch = useAppDispatch();
 
-    const [pizzaMutation, setPizzaMutation] = React.useState<PizzaMutation>(initialState);
+    const [pizzaMutationState, setPizzaMutationState] = React.useState<PizzaMutation>(emptyState);
 
     const changePizza = (
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     ) => {
-        setPizzaMutation((prev) => ({
+        setPizzaMutationState((prev) => ({
             ...prev,
             [event.target.name]: event.target.value,
         }));
     };
 
-    const onFormSubmit = (event: React.FormEvent) => {
+    const onFormSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
-
-        onSubmit({
-            ...pizzaMutation,
-            price: parseFloat(pizzaMutation.price),
-        });
+        try {
+            await dispatch(createPizza({...pizzaMutationState})).unwrap();
+            navigate("/admin");
+            toast.success("Pizza successfully created!");
+        } catch (e) {
+            toast.error('Could not create Pizza');
+        }
     };
+
+
     return (
         <form className="col-md-6" onSubmit={onFormSubmit}>
             <h4 className="mb-5 text-primary text-center">Pizza time</h4>
@@ -47,7 +50,7 @@ const PizzaForm: React.FC<Props> = (onSubmit, existingPizza, isLoading = false) 
                     id="title"
                     required
                     className="form-control my-2"
-                    value={pizzaMutation.title}
+                    value={pizzaMutationState.title}
                     onChange={changePizza}
                 />
             </div>
@@ -59,7 +62,7 @@ const PizzaForm: React.FC<Props> = (onSubmit, existingPizza, isLoading = false) 
                     id="price"
                     required
                     className="form-control my-2"
-                    value={pizzaMutation.price}
+                    value={pizzaMutationState.price}
                     onChange={changePizza}
                 />
             </div>
@@ -71,11 +74,11 @@ const PizzaForm: React.FC<Props> = (onSubmit, existingPizza, isLoading = false) 
                     id="image"
                     required
                     className="form-control my-2"
-                    value={pizzaMutation.image}
+                    value={pizzaMutationState.image}
                     onChange={changePizza}
                 />
             </div>
-            <button type="submit" className="btn btn-primary mt-3">Submit</button>
+            <button type="submit" className="btn btn-primary mt-3" disabled={isCreating}>Submit</button>
 
         </form>
     );

@@ -1,10 +1,9 @@
 import {configureStore, Store} from '@reduxjs/toolkit';
-import {cartReducer} from "../store/cartSlice.ts";
+import {pizzaReducer} from "../store/pizzaSlice.ts";
 
 export const store : Store = configureStore({
     reducer: {
-        cart: cartReducer,
-        // dishes: dishesReducer,
+        pizza: pizzaReducer,
     }
 });
 
