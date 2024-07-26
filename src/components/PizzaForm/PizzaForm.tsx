@@ -62,7 +62,7 @@ const PizzaForm = () => {
                 await dispatch(createPizza({ ...pizzaMutationState })).unwrap();
                 toast.success("Pizza successfully created!");
             }
-            navigate("/admin");
+            navigate("/admin/dishes");
             setPizzaMutationState(emptyState);
         } catch (e) {
             toast.error('Could not save Pizza');

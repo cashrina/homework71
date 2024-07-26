@@ -8,7 +8,7 @@ const Toolbar = () => {
                 <NavLink to="/" className="navbar-brand">
                     Turtie Pizza Admin
                 </NavLink>
-                {(location.pathname === "/admin/dishes" || location.pathname === "/admin/orders") ? (
+                {(location.pathname === "/admin/dishes" || location.pathname === "/admin/orders" || location.pathname === "/admin") ? (
                     <ul className="navbar-nav d-flex flex-row gap-3 flex-nowrap">
                         <li className="nav-item">
                             <NavLink to="/admin/dishes" className="nav-link">

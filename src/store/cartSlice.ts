@@ -1,5 +1,5 @@
-import {CartPizza, Pizza} from "../types.ts";
-import {createSlice, PayloadAction} from "@reduxjs/toolkit";
+import { CartPizza, Pizza } from "../types.ts";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface CartState {
     cartPizza: CartPizza[];
@@ -7,15 +7,15 @@ interface CartState {
 
 const initialState: CartState = {
     cartPizza: [],
-}
+};
 
 const cartSlice = createSlice({
     name: "cart",
     initialState,
     reducers: {
-        addPizza: (state, {payload: pizza}: PayloadAction<Pizza>) => {
+        addPizza: (state, { payload: pizza }: PayloadAction<Pizza>) => {
             const index = state.cartPizza.findIndex(
-                (cartPizza: CartPizza) => cartPizza.pizza.id === pizza.id,
+                (cartDish) => cartDish.pizza.id === pizza.id
             );
 
             if (index !== -1) {
@@ -28,12 +28,14 @@ const cartSlice = createSlice({
             }
         },
 
-        updatePizzas: (state, {payload: pizzas}: PayloadAction<Pizza[]>) => {
+        updatePizzas: (state, { payload: pizzas }: PayloadAction<Pizza[]>) => {
             const newCartPizza: CartPizza[] = [];
             state.cartPizza.forEach((cartPizza: CartPizza) => {
-                const existingCartPizza: Pizza | undefined = pizzas.find((pizza: Pizza) => cartPizza.pizza.id === pizza.id); ////  перепроверить тип
+                const existingCartPizza: Pizza | undefined = pizzas.find(
+                    (pizza: Pizza) => cartPizza.pizza.id === pizza.id
+                );
 
-                if (! existingCartPizza) {
+                if (!existingCartPizza) {
                     return;
                 }
 
@@ -47,12 +49,13 @@ const cartSlice = createSlice({
         clearPizza: (state) => {
             state.cartPizza = [];
         },
+
     },
     selectors: {
-        selectPizza: (state: CartState) => state.cartPizza,
-    },
+        selectPizzaCard: (state) => state.cartPizza,
+    }
 });
 
 export const cartReducer = cartSlice.reducer;
-export const {addPizza, updatePizzas, clearPizza} = cartSlice.actions;
-export const {selectPizza} = cartSlice.selectors;
+export const { addPizza, updatePizzas } = cartSlice.actions;
+export const {selectPizzaCard} = cartSlice.selectors;
