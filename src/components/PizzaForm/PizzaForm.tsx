@@ -1,22 +1,43 @@
-import {PizzaMutation} from "../../types.ts";
+import { PizzaMutation } from "../../types.ts";
 import * as React from "react";
-import {useAppDispatch, useAppSelector} from "../../app/hooks.ts";
-import {selectPizzaCreating} from "../../store/pizzaSlice.ts";
-import {createPizza} from "../../store/pizzaThunks.ts";
-import {toast} from "react-toastify";
-import {useNavigate} from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../../app/hooks.ts";
+import { selectPizzaCreating, selectPizzas } from "../../store/pizzaSlice.ts";
+import { createPizza, updatePizza, fetchOnePizza } from "../../store/pizzaThunks.ts";
+import { toast } from "react-toastify";
+import { useNavigate, useParams } from "react-router-dom";
+import { useEffect } from "react";
 
 const emptyState: PizzaMutation = {
     title: '',
     price: '',
     image: '',
 };
+
 const PizzaForm = () => {
+    const { id } = useParams();
     const navigate = useNavigate();
     const isCreating = useAppSelector(selectPizzaCreating);
     const dispatch = useAppDispatch();
+    const pizzas = useAppSelector(selectPizzas);
 
     const [pizzaMutationState, setPizzaMutationState] = React.useState<PizzaMutation>(emptyState);
+
+    useEffect(() => {
+        if (id) {
+            const pizza = pizzas.find(p => p.id === id);
+            if (pizza) {
+                setPizzaMutationState({
+                    title: pizza.title,
+                    price: pizza.price.toString(),
+                    image: pizza.image
+                });
+            } else {
+                dispatch(fetchOnePizza(id));
+            }
+        } else {
+            setPizzaMutationState(emptyState);
+        }
+    }, [id, pizzas, dispatch]);
 
     const changePizza = (
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -30,14 +51,23 @@ const PizzaForm = () => {
     const onFormSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
         try {
-            await dispatch(createPizza({...pizzaMutationState})).unwrap();
+            const body = {
+                ...pizzaMutationState,
+                price: parseInt(pizzaMutationState.price)
+            }
+            if (id !== undefined) {
+                await dispatch(updatePizza({id, apiPizza: body}));
+                toast.success("Pizza successfully updated!");
+            } else {
+                await dispatch(createPizza({ ...pizzaMutationState })).unwrap();
+                toast.success("Pizza successfully created!");
+            }
             navigate("/admin");
-            toast.success("Pizza successfully created!");
+            setPizzaMutationState(emptyState);
         } catch (e) {
-            toast.error('Could not create Pizza');
+            toast.error('Could not save Pizza');
         }
     };
-
 
     return (
         <form className="col-md-6" onSubmit={onFormSubmit}>
@@ -78,8 +108,10 @@ const PizzaForm = () => {
                     onChange={changePizza}
                 />
             </div>
-            <button type="submit" className="btn btn-primary mt-3" disabled={isCreating}>Submit</button>
 
+            <button className="btn btn-primary" type="submit" disabled={isCreating}>
+                {id ? 'Save' : 'Add'}
+            </button>
         </form>
     );
 };

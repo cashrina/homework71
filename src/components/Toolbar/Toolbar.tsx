@@ -1,24 +1,27 @@
-import {NavLink} from "react-router-dom";
+import {NavLink, useLocation} from "react-router-dom";
 
 const Toolbar = () => {
+    const location = useLocation();
     return (
         <nav className="navbar navbar-dark bg-primary">
             <div className="container-fluid">
-                <NavLink to="/admin" className="navbar-brand">
+                <NavLink to="/" className="navbar-brand">
                     Turtie Pizza Admin
                 </NavLink>
-                <ul className="navbar-nav d-flex flex-row gap-3 flex-nowrap">
-                    <li className="nav-item">
-                        <NavLink to="/admin/dishes" className="nav-link">
-                            Dishes
-                        </NavLink>
-                    </li>
-                    <li className="nav-item">
-                        <NavLink to="/admin/orders" className="nav-link">
-                            Orders
-                        </NavLink>
-                    </li>
-                </ul>
+                {(location.pathname === "/admin/dishes" || location.pathname === "/admin/orders") ? (
+                    <ul className="navbar-nav d-flex flex-row gap-3 flex-nowrap">
+                        <li className="nav-item">
+                            <NavLink to="/admin/dishes" className="nav-link">
+                                Dishes
+                            </NavLink>
+                        </li>
+                        <li className="nav-item">
+                            <NavLink to="/admin/orders" className="nav-link">
+                                Orders
+                            </NavLink>
+                        </li>
+                    </ul>
+                ) : null}
             </div>
         </nav>
     );

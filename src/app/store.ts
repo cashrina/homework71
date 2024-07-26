@@ -1,7 +1,7 @@
-import {configureStore, Store} from '@reduxjs/toolkit';
+import {configureStore} from '@reduxjs/toolkit';
 import {pizzaReducer} from "../store/pizzaSlice.ts";
 
-export const store : Store = configureStore({
+export const store  = configureStore({
     reducer: {
         pizza: pizzaReducer,
     }

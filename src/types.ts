@@ -5,11 +5,7 @@ export interface Pizza {
     image: string;
 }
 
-
-
 export type ApiPizza = Omit<Pizza, 'id'>;
-
-
 
 export interface PizzaId extends Pizza {
     id: string;
@@ -18,6 +14,7 @@ export interface PizzaId extends Pizza {
 export interface ApiPizzas {
     [id: string]: ApiPizza;
 }
+
 
 export interface PizzaMutation {
     title: string;
